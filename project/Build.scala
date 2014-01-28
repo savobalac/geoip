@@ -10,9 +10,11 @@ object ApplicationBuild extends Build {
     val appDependencies = Seq(
         // Add your project dependencies here,
         "mysql" % "mysql-connector-java" % "5.1.18",
+        "postgresql" % "postgresql" % "9.1-901.jdbc4",
         "org.reflections" % "reflections" % "0.9.8",
         javaCore, javaJdbc, javaEbean,
-        filters
+        filters,
+        "com.atlassian.connect" % "ac-play-java_2.10" % "0.7.0-BETA6" withSources()
     )
 
     val main = play.Project(appName, appVersion, appDependencies).settings(
