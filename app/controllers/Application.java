@@ -16,6 +16,11 @@ public class Application extends Controller {
 }*/
 package controllers;
 
+import play.*;
+import play.mvc.*;
+
+import views.html.*;
+
 import com.atlassian.connect.play.java.controllers.AcController;
 import com.google.common.base.Supplier;
 import play.mvc.Controller;
@@ -40,9 +45,10 @@ public class Application extends Controller {
      * @return Result  The home page.
      */
     public static Result index() {
-        return AcController.index(
-                AcController.home(),    // The HTML home page from the module, as this is our documentation for now
-                descriptorSupplier());  // Serve the descriptor when accept header is 'application/json'
+        return ok(views.html.index.render("Your new application is ready."));
+        //return AcController.index(
+        //        AcController.home(),    // The HTML home page from the module, as this is our documentation for now
+        //        descriptorSupplier());  // Serve the descriptor when accept header is 'application/json'
                                         //     try 'curl -H "Accept: application/json" http://localhost:9000'
     }
 
@@ -54,7 +60,7 @@ public class Application extends Controller {
      * @return Result  The descriptor as JSON.
      */
     public static Result descriptor() {
-        return AcController.descriptor();
+        //return AcController.descriptor();
     }
 
 
@@ -64,7 +70,7 @@ public class Application extends Controller {
      * @return Supplier  The supplier.
      */
     private static Supplier descriptorSupplier() {
-        return new Supplier() {
+        //return new Supplier() {
             public Result get() {
                 return descriptor();
             }
