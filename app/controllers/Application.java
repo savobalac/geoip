@@ -16,15 +16,22 @@ public class Application extends Controller {
 }*/
 package controllers;
 
-import play.*;
-import play.mvc.*;
+//import play.*;
+//import play.mvc.*;
 
-import views.html.*;
+//import views.html.*;
 
 import com.atlassian.connect.play.java.controllers.AcController;
 import com.google.common.base.Supplier;
+import com.maxmind.geoip2.WebServiceClient;
+import com.maxmind.geoip2.exception.GeoIp2Exception;
+import com.maxmind.geoip2.model.OmniResponse;
 import play.mvc.Controller;
 import play.mvc.Result;
+
+import java.io.IOException;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 
 /**
  * Application controller. Code given by Atlassian Connect from: http://localhost:9000/@connect/descriptor.
@@ -45,10 +52,11 @@ public class Application extends Controller {
      * @return Result  The home page.
      */
     public static Result index() {
-        return ok(views.html.index.render("Your new application is ready."));
-        //return AcController.index(
-        //        AcController.home(),    // The HTML home page from the module, as this is our documentation for now
-        //        descriptorSupplier());  // Serve the descriptor when accept header is 'application/json'
+        //return ok(views.html.index.render("Your new application is ready."));
+        testGeoIP();
+        return AcController.index(
+                AcController.home(),    // The HTML home page from the module, as this is our documentation for now
+                descriptorSupplier());  // Serve the descriptor when accept header is 'application/json'
                                         //     try 'curl -H "Accept: application/json" http://localhost:9000'
     }
 
@@ -60,7 +68,7 @@ public class Application extends Controller {
      * @return Result  The descriptor as JSON.
      */
     public static Result descriptor() {
-        //return AcController.descriptor();
+        return AcController.descriptor();
     }
 
 
@@ -70,11 +78,48 @@ public class Application extends Controller {
      * @return Supplier  The supplier.
      */
     private static Supplier descriptorSupplier() {
-        //return new Supplier() {
+        return new Supplier() {
             public Result get() {
                 return descriptor();
             }
         };
+    }
+
+
+    public static void testGeoIP() {
+        // This creates a WebServiceClient object that can be reused across requests.
+        // Replace "42" with your user ID and "license_key" with your license key.
+        try {
+            // Demo user ID and license key
+            WebServiceClient client = new WebServiceClient.Builder(85883, "DCbc8uukhWNg").build();
+
+            // Replace "omni" with the method corresponding to the web service that
+            // you are using, e.g., "country", "cityIspOrg", "city".
+            //OmniResponse response = client.omni(InetAddress.getByName("128.101.101.101"));
+            OmniResponse response = client.omni(InetAddress.getByName("86.169.215.193"));
+
+            System.out.println(response.getCountry().getIsoCode()); // 'GB'
+            System.out.println(response.getCountry().getName()); // 'United Kingdom'
+            System.out.println(response.getCountry().getNames().get("zh-CN")); // '美国'
+
+            System.out.println(response.getMostSpecificSubdivision().getName()); // 'Milton Keynes'
+            System.out.println(response.getMostSpecificSubdivision().getIsoCode()); // 'MIK'
+
+            System.out.println(response.getCity().getName()); // 'MK'
+
+            System.out.println(response.getPostal().getCode()); // 'null'
+
+            System.out.println(response.getLocation().getLatitude()); // 52.0333
+            System.out.println(response.getLocation().getLongitude()); // -0.7
+        } catch (GeoIp2Exception e) {
+            System.out.println("GeoIp2Exception: " + e);
+        } catch (UnknownHostException e) {
+            System.out.println("Unknown host: " + "128.101.101.101" + e);
+        } catch (IOException e) {
+            System.out.println("IOException: " + e);
+        } catch (Exception e) {
+            System.out.println("Exception: " + e);
+        }
     }
 
 

@@ -14,7 +14,8 @@ object ApplicationBuild extends Build {
         "org.reflections" % "reflections" % "0.9.8",
         javaCore, javaJdbc, javaEbean,
         filters,
-        "com.atlassian.connect" % "ac-play-java_2.10" % "0.7.0-BETA6" withSources()
+        "com.atlassian.connect" % "ac-play-java_2.10" % "0.7.0-BETA6" withSources(),
+        "com.maxmind.geoip2" % "geoip2" % "0.7.0" withSources()
     )
 
     val main = play.Project(appName, appVersion, appDependencies).settings(
