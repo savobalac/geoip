@@ -98,19 +98,56 @@ public class Application extends Controller {
             //OmniResponse response = client.omni(InetAddress.getByName("128.101.101.101"));
             OmniResponse response = client.omni(InetAddress.getByName("86.169.215.193"));
 
-            System.out.println(response.getCountry().getIsoCode()); // 'GB'
-            System.out.println(response.getCountry().getName()); // 'United Kingdom'
-            System.out.println(response.getCountry().getNames().get("zh-CN")); // '美国'
+            System.out.println("response = \n" + response);
 
-            System.out.println(response.getMostSpecificSubdivision().getName()); // 'Milton Keynes'
-            System.out.println(response.getMostSpecificSubdivision().getIsoCode()); // 'MIK'
 
-            System.out.println(response.getCity().getName()); // 'MK'
+            System.out.println("Continent Code:      " + response.getContinent().getCode());
+            System.out.println("Continent GeoNameId: " + response.getContinent().getGeoNameId());
+            System.out.println("Continent Name:      " + response.getContinent().getName());
 
-            System.out.println(response.getPostal().getCode()); // 'null'
+            System.out.println("Country Confidence: " + response.getCountry().getConfidence());
+            System.out.println("Country IsoCode:    " + response.getCountry().getIsoCode()); // 'GB'
+            System.out.println("Country GeoNameId:  " + response.getCountry().getGeoNameId());
+            System.out.println("Country Name:       " + response.getCountry().getName()); // 'United Kingdom'
 
-            System.out.println(response.getLocation().getLatitude()); // 52.0333
-            System.out.println(response.getLocation().getLongitude()); // -0.7
+            System.out.println("Registered Country IsoCode:   " + response.getRegisteredCountry().getIsoCode());
+            System.out.println("Registered Country GeoNameId: " + response.getRegisteredCountry().getGeoNameId());
+            System.out.println("Registered Country Name:      " + response.getRegisteredCountry().getName());
+
+            System.out.println("Represented Country IsoCode:   " + response.getRepresentedCountry().getIsoCode());
+            System.out.println("Represented Country GeoNameId: " + response.getRepresentedCountry().getGeoNameId());
+            System.out.println("Represented Country Name:      " + response.getRepresentedCountry().getName());
+            System.out.println("Represented Country Type:      " + response.getRepresentedCountry().getType());
+
+            System.out.println("City Confidence: " + response.getCity().getConfidence());
+            System.out.println("City GeoNameId:  " + response.getCity().getGeoNameId());
+            System.out.println("City Name:       " + response.getCity().getName()); // 'MK'
+
+            System.out.println("Postal Code:       " + response.getPostal().getCode()); // 'null'
+            System.out.println("Postal Confidence: " + response.getPostal().getConfidence());
+
+            System.out.println("Location AccuracyRadius: " + response.getLocation().getAccuracyRadius());
+            System.out.println("Location Latitude:       " + response.getLocation().getLatitude()); // 52.0333
+            System.out.println("Location Longitude:      " + response.getLocation().getLongitude()); // -0.7
+            System.out.println("Location MetroCode:      " + response.getLocation().getMetroCode());
+            System.out.println("Location TimeZone:       " + response.getLocation().getTimeZone());
+
+            System.out.println("MostSpecificSubdivision Confidence: " + response.getMostSpecificSubdivision().getConfidence());
+            System.out.println("MostSpecificSubdivision GeoNameId:  " + response.getMostSpecificSubdivision().getGeoNameId());
+            System.out.println("MostSpecificSubdivision IsoCode:    " + response.getMostSpecificSubdivision().getIsoCode()); // 'MIK'
+            System.out.println("MostSpecificSubdivision Name:       " + response.getMostSpecificSubdivision().getName()); // 'Milton Keynes'
+
+            System.out.println("Traits AutonomousSystemNumber:       " + response.getTraits().getAutonomousSystemNumber());
+            System.out.println("Traits AutonomousSystemOrganization: " + response.getTraits().getAutonomousSystemOrganization());
+            System.out.println("Traits Domain:                       " + response.getTraits().getDomain());
+            System.out.println("Traits IpAddress:                    " + response.getTraits().getIpAddress());
+            System.out.println("Traits isAnonymousProxy:             " + response.getTraits().isAnonymousProxy());
+            System.out.println("Traits isSatelliteProvider:          " + response.getTraits().isSatelliteProvider());
+            System.out.println("Traits Isp:                          " + response.getTraits().getIsp());
+            System.out.println("Traits Organization:                 " + response.getTraits().getOrganization());
+            System.out.println("Traits UserType:                     " + response.getTraits().getUserType());
+
+
         } catch (GeoIp2Exception e) {
             System.out.println("GeoIp2Exception: " + e);
         } catch (UnknownHostException e) {
