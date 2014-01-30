@@ -54,9 +54,10 @@ public class Application extends Controller {
     public static Result index() {
         //return ok(views.html.index.render("Your new application is ready."));
         testGeoIP();
-        return AcController.index(
-                AcController.home(),    // The HTML home page from the module, as this is our documentation for now
-                descriptorSupplier());  // Serve the descriptor when accept header is 'application/json'
+        return ok("index()");
+        //return AcController.index(
+        //        AcController.home(),    // The HTML home page from the module, as this is our documentation for now
+        //        descriptorSupplier());  // Serve the descriptor when accept header is 'application/json'
                                         //     try 'curl -H "Accept: application/json" http://localhost:9000'
     }
 
