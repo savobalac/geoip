@@ -68,9 +68,9 @@ public class Application extends Controller {
      *
      * @return Result  The descriptor as JSON.
      */
-    public static Result descriptor() {
-        return AcController.descriptor();
-    }
+    //public static Result descriptor() {
+    //    return AcController.descriptor();
+    //}
 
 
     /**
@@ -78,13 +78,13 @@ public class Application extends Controller {
      *
      * @return Supplier  The supplier.
      */
-    private static Supplier descriptorSupplier() {
-        return new Supplier() {
-            public Result get() {
-                return descriptor();
-            }
-        };
-    }
+    //private static Supplier descriptorSupplier() {
+    //    return new Supplier() {
+    //        public Result get() {
+    //            return descriptor();
+    //        }
+    //    };
+    //}
 
 
     public static void testGeoIP() {
