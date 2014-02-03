@@ -3,166 +3,175 @@ package controllers;
 import com.maxmind.geoip2.WebServiceClient;
 import com.maxmind.geoip2.exception.GeoIp2Exception;
 import com.maxmind.geoip2.model.OmniResponse;
+
 import models.UserLogin;
 import models.WikiUser;
-import play.mvc.Controller;
+
+import play.Play;
 import play.mvc.Result;
+
+import play.mvc.Security;
 import utils.Utils;
 
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.sql.Timestamp;
 
 /**
- * .
- * <p/>
+ * The controller that requests location data for a user at an IP address.
+ *
  * Date: 31/01/14
  * Time: 12:16
  *
  * @author Sav Balac
  * @version 1.0
- * @since 1.0
  */
-public class GeoIp extends Controller {
+@Security.Authenticated(Secured.class) // All methods will require the API user to be logged in
+public class GeoIp extends AbstractController {
 
+    // Class variables
+    private static WebServiceClient client;
     private static OmniResponse response;
 
+
+    /**
+     * Gets GeoIP2 location data for the requested user at the IP address and saves it to the database.
+     *
+     * @param  userName  The username of the requested user.
+     * @return Result  The output of GeoIP2 as a string.
+     */
     public static Result getLocation(String userName, String ipAddress) {
-        // This creates a WebServiceClient object that can be reused across requests.
-        // Replace "42" with your user ID and "license_key" with your license key.
         try {
 
-            // Test wiki user model
-            //WikiUser wikiUser = WikiUser.find.byId(1L);
-            //System.out.println("WikiUser: " + wikiUser.id + ", " + wikiUser.username + ", " + wikiUser.email + ", " +
-            //        wikiUser.password + ", " + wikiUser.forename + ", " + wikiUser.surname);
+            System.out.println("*** In getLocation() BEFORE checking the user exists");
 
-            // Test user login model
-            //UserLogin userLogin = UserLogin.find.byId(1L);
-            //System.out.println("UserLogin: " + userLogin.id + ", " + userLogin.username + ", " +
-            //        userLogin.login_timestamp + ", " + userLogin.ip_address);
+            // Check the user exists and return if not
+            if (WikiUser.find.where().eq("username", userName).findUnique() == null) {
+                return noWikiUser(userName);
+            }
 
-            // Demo user ID and license key
-            WebServiceClient client = new WebServiceClient.Builder(85883, "DCbc8uukhWNg").build();
+            System.out.println("*** In getLocation() after checking the user exists");
 
-            // Replace "omni" with the method corresponding to the web service that
-            // you are using, e.g., "country", "cityIspOrg", "city".
-            //OmniResponse response = client.omni(InetAddress.getByName("128.101.101.101"));
+            // Create a WebServiceClient object using the demo user ID and license key
+            int geoId = Play.application().configuration().getInt("geoip2.id");
+            String geoKey = Play.application().configuration().getString("geoip2.key");
+            //client = new WebServiceClient.Builder(85883, "DCbc8uukhWNg").build();
+            client = new WebServiceClient.Builder(geoId, geoKey).build();
+
+            System.out.println("*** In getLocation() after building the web service client");
+
+            // Get the data
             response = client.omni(InetAddress.getByName(ipAddress));
 
+            System.out.println("*** In getLocation() after getting the response");
+
+            // Create a user login object
             UserLogin userLogin = new UserLogin();
+
             userLogin.username = userName;
-            userLogin.login_timestamp = Utils.getCurrentDateTime();
-            userLogin.ip_address = ipAddress;
+            userLogin.loginTimestamp = Utils.getCurrentDateTime();
+            userLogin.ipAddress = ipAddress;
 
-            userLogin.continent_code = response.getContinent().getCode();
-            userLogin.continent_geoname_id = response.getContinent().getGeoNameId();
-            userLogin.continent_name = response.getContinent().getName();
+            userLogin.continentCode = response.getContinent().getCode();
+            userLogin.continentGeonameId = response.getContinent().getGeoNameId();
+            userLogin.continentName = response.getContinent().getName();
 
-            userLogin.country_confidence = response.getCountry().getConfidence();
-            userLogin.country_iso_code = response.getCountry().getIsoCode();
-            userLogin.country_geoname_id = response.getCountry().getGeoNameId();
-            userLogin.country_name = response.getCountry().getName();
+            userLogin.countryConfidence = response.getCountry().getConfidence();
+            userLogin.countryIsoCode = response.getCountry().getIsoCode();
+            userLogin.countryGeonameId = response.getCountry().getGeoNameId();
+            userLogin.countryName = response.getCountry().getName();
 
-            userLogin.registered_country_iso_code = response.getRegisteredCountry().getIsoCode();
-            userLogin.registered_country_geoname_id = response.getRegisteredCountry().getGeoNameId();
-            userLogin.registered_country_name = response.getRegisteredCountry().getName();
+            userLogin.registeredCountryIsoCode = response.getRegisteredCountry().getIsoCode();
+            userLogin.registeredCountryGeonameId = response.getRegisteredCountry().getGeoNameId();
+            userLogin.registeredCountryName = response.getRegisteredCountry().getName();
 
-            userLogin.represented_country_iso_code = response.getRepresentedCountry().getIsoCode();
-            userLogin.represented_country_geoname_id = response.getRepresentedCountry().getGeoNameId();
-            userLogin.represented_country_name = response.getRepresentedCountry().getName();
-            userLogin.represented_country_type = response.getRepresentedCountry().getType();
+            userLogin.representedCountryIsoCode = response.getRepresentedCountry().getIsoCode();
+            userLogin.representedCountryGeonameId = response.getRepresentedCountry().getGeoNameId();
+            userLogin.representedCountryName = response.getRepresentedCountry().getName();
+            userLogin.representedCountryType = response.getRepresentedCountry().getType();
 
-            userLogin.city_confidence = response.getCity().getConfidence();
-            userLogin.city_geoname_id = response.getCity().getGeoNameId();
-            userLogin.city_name = response.getCity().getName();
+            userLogin.cityConfidence = response.getCity().getConfidence();
+            userLogin.cityGeonameId = response.getCity().getGeoNameId();
+            userLogin.cityName = response.getCity().getName();
 
-            userLogin.postal_code = response.getPostal().getCode();
-            userLogin.postal_confidence = response.getPostal().getConfidence();
+            userLogin.postalCode = response.getPostal().getCode();
+            userLogin.postalConfidence = response.getPostal().getConfidence();
 
-            userLogin.location_accuracy_radius = response.getLocation().getAccuracyRadius();
-            userLogin.location_latitude = response.getLocation().getLatitude();
-            userLogin.location_longitude = response.getLocation().getLongitude();
-            userLogin.location_metro_code = response.getLocation().getMetroCode();
-            userLogin.location_time_zone = response.getLocation().getTimeZone();
+            userLogin.locationAccuracyRadius = response.getLocation().getAccuracyRadius();
+            userLogin.locationLatitude = response.getLocation().getLatitude();
+            userLogin.locationLongitude = response.getLocation().getLongitude();
+            userLogin.locationMetroCode = response.getLocation().getMetroCode();
+            userLogin.locationTimeZone = response.getLocation().getTimeZone();
 
-            userLogin.most_specific_subdivision_confidence = response.getMostSpecificSubdivision().getConfidence();
-            userLogin.most_specific_subdivision_geoname_id = response.getMostSpecificSubdivision().getGeoNameId();
-            userLogin.most_specific_subdivision_iso_code = response.getMostSpecificSubdivision().getIsoCode();
-            userLogin.most_specific_subdivision_name = response.getMostSpecificSubdivision().getName();
+            userLogin.mostSpecificSubdivisionConfidence = response.getMostSpecificSubdivision().getConfidence();
+            userLogin.mostSpecificSubdivisionGeonameId = response.getMostSpecificSubdivision().getGeoNameId();
+            userLogin.mostSpecificSubdivisionIsoCode = response.getMostSpecificSubdivision().getIsoCode();
+            userLogin.mostSpecificSubdivisionName = response.getMostSpecificSubdivision().getName();
 
-            userLogin.traits_autonomous_system_number = response.getTraits().getAutonomousSystemNumber();
-            userLogin.traits_autonomous_system_organization = response.getTraits().getAutonomousSystemOrganization();
-            userLogin.traits_domain = response.getTraits().getDomain();
-            userLogin.traits_ip_address = response.getTraits().getIpAddress();
-            userLogin.traits_is_anonymous_proxy = response.getTraits().isAnonymousProxy();
-            userLogin.traits_is_satellite_provider = response.getTraits().isSatelliteProvider();
-            userLogin.traits_isp = response.getTraits().getIsp();
-            userLogin.traits_organization = response.getTraits().getOrganization();
-            userLogin.traits_user_type = response.getTraits().getUserType();
+            userLogin.traitsAutonomousSystemNumber = response.getTraits().getAutonomousSystemNumber();
+            userLogin.traitsAutonomousSystemOrganization = response.getTraits().getAutonomousSystemOrganization();
+            userLogin.traitsDomain = response.getTraits().getDomain();
+            userLogin.traitsIpAddress = response.getTraits().getIpAddress();
+            userLogin.traitsIsAnonymousProxy = response.getTraits().isAnonymousProxy();
+            userLogin.traitsIsSatelliteProvider = response.getTraits().isSatelliteProvider();
+            userLogin.traitsIsp = response.getTraits().getIsp();
+            userLogin.traitsOrganization = response.getTraits().getOrganization();
+            userLogin.traitsUserType = response.getTraits().getUserType();
 
+            // Save the user login
             userLogin.save();
 
-            System.out.println("response = \n" + response);
-
-            System.out.println("Continent Code:      " + response.getContinent().getCode());
-            System.out.println("Continent GeoNameId: " + response.getContinent().getGeoNameId());
-            System.out.println("Continent Name:      " + response.getContinent().getName());
-
-            System.out.println("Country Confidence: " + response.getCountry().getConfidence());
-            System.out.println("Country IsoCode:    " + response.getCountry().getIsoCode()); // 'GB'
-            System.out.println("Country GeoNameId:  " + response.getCountry().getGeoNameId());
-            System.out.println("Country Name:       " + response.getCountry().getName()); // 'United Kingdom'
-
-            System.out.println("Registered Country IsoCode:   " + response.getRegisteredCountry().getIsoCode());
-            System.out.println("Registered Country GeoNameId: " + response.getRegisteredCountry().getGeoNameId());
-            System.out.println("Registered Country Name:      " + response.getRegisteredCountry().getName());
-
-            System.out.println("Represented Country IsoCode:   " + response.getRepresentedCountry().getIsoCode());
-            System.out.println("Represented Country GeoNameId: " + response.getRepresentedCountry().getGeoNameId());
-            System.out.println("Represented Country Name:      " + response.getRepresentedCountry().getName());
-            System.out.println("Represented Country Type:      " + response.getRepresentedCountry().getType());
-
-            System.out.println("City Confidence: " + response.getCity().getConfidence());
-            System.out.println("City GeoNameId:  " + response.getCity().getGeoNameId());
-            System.out.println("City Name:       " + response.getCity().getName()); // 'MK'
-
-            System.out.println("Postal Code:       " + response.getPostal().getCode()); // 'null'
-            System.out.println("Postal Confidence: " + response.getPostal().getConfidence());
-
-            System.out.println("Location AccuracyRadius: " + response.getLocation().getAccuracyRadius());
-            System.out.println("Location Latitude:       " + response.getLocation().getLatitude()); // 52.0333
-            System.out.println("Location Longitude:      " + response.getLocation().getLongitude()); // -0.7
-            System.out.println("Location MetroCode:      " + response.getLocation().getMetroCode());
-            System.out.println("Location TimeZone:       " + response.getLocation().getTimeZone());
-
-            System.out.println("MostSpecificSubdivision Confidence: " + response.getMostSpecificSubdivision().getConfidence());
-            System.out.println("MostSpecificSubdivision GeoNameId:  " + response.getMostSpecificSubdivision().getGeoNameId());
-            System.out.println("MostSpecificSubdivision IsoCode:    " + response.getMostSpecificSubdivision().getIsoCode()); // 'MIK'
-            System.out.println("MostSpecificSubdivision Name:       " + response.getMostSpecificSubdivision().getName()); // 'Milton Keynes'
-
-            System.out.println("Traits AutonomousSystemNumber:       " + response.getTraits().getAutonomousSystemNumber());
-            System.out.println("Traits AutonomousSystemOrganization: " + response.getTraits().getAutonomousSystemOrganization());
-            System.out.println("Traits Domain:                       " + response.getTraits().getDomain());
-            System.out.println("Traits IpAddress:                    " + response.getTraits().getIpAddress());
-            System.out.println("Traits isAnonymousProxy:             " + response.getTraits().isAnonymousProxy());
-            System.out.println("Traits isSatelliteProvider:          " + response.getTraits().isSatelliteProvider());
-            System.out.println("Traits Isp:                          " + response.getTraits().getIsp());
-            System.out.println("Traits Organization:                 " + response.getTraits().getOrganization());
-            System.out.println("Traits UserType:                     " + response.getTraits().getUserType());
-
+            // Return the response as JSON
+            if (request().accepts("application/json") || request().accepts("text/json")) {
+                return ok(getSuccessAsJson(response.toString()));
+            } else {
+                return badRequest();
+            }
 
         } catch (GeoIp2Exception e) {
-            System.out.println("GeoIp2Exception: " + e);
+            return locationError(userName, ipAddress, e);
         } catch (UnknownHostException e) {
-            System.out.println("Unknown host: " + ipAddress + e);
+            return locationError(userName, ipAddress, e);
         } catch (IOException e) {
-            System.out.println("IOException: " + e);
+            return locationError(userName, ipAddress, e);
         } catch (Exception e) {
-            System.out.println("Exception: " + e);
+            return locationError(userName, ipAddress, e);
         }
-        return ok(response.toString());
+
     }
+
+
+    /**
+     * Returns a message when the Wiki user doesn't exist.
+     *
+     * @param  userName  Username.
+     * @return Result  A message as JSON.
+     */
+    private static Result noWikiUser(String userName) {
+        String message = "Wiki user: " + userName + " does not exist.";
+        if (request().accepts("application/json") || request().accepts("text/json")) { // Return data as JSON
+            return ok(getErrorAsJson(message));
+        } else {
+            return badRequest();
+        }
+    }
+
+
+    /**
+     * Returns a message if an exception occurred getting the GeoIP data.
+     *
+     * @param  userName  Username.
+     * @return Result  A message as JSON.
+     */
+    private static Result locationError(String userName, String ipAddress, Exception e) {
+        String message = "Error getting location data for Wiki user: " + userName +
+                         ", at IP address: " + ipAddress + ", error: " + e;
+        if (request().accepts("application/json") || request().accepts("text/json")) { // Return data as JSON
+            return ok(getErrorAsJson(message));
+        } else {
+            return badRequest();
+        }
+    }
+
 
 }

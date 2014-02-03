@@ -3,12 +3,9 @@ package models;
 import org.joda.time.DateTime;
 import play.data.format.Formats;
 import play.data.validation.Constraints;
-
 import play.db.ebean.Model;
 import play.db.ebean.Model.Finder; // Import Finder as sometimes Play! shows compilation error "not found: type Finder"
-
 import javax.persistence.*;
-import java.sql.Timestamp;
 
 /**
  * Model class that maps to table user_login. This is the Confluence user with details of their login and location.
@@ -24,75 +21,76 @@ import java.sql.Timestamp;
 public class UserLogin extends Model {
 
     // Instance variables
-    // A required constraint will ensure fields have values
-    @Constraints.Required
+    @Constraints.Required // A required constraint will ensure fields have values
     @SequenceGenerator(name="seq_gen_name", sequenceName="user_login_id_seq") // Required for a Postgres database
     @GeneratedValue(strategy=GenerationType.SEQUENCE, generator="seq_gen_name")
     @Id
     public Long                     id;
 
     @Constraints.Required
-    @Formats.NonEmpty                         // A non-empty format will convert spaces to null and ensure validation
-    public String                   username;
+    @Formats.NonEmpty
+    public String                   username; // A non-empty format will convert spaces to null and ensure validation
 
     @Constraints.Required
     @Formats.NonEmpty
-    public DateTime                 login_timestamp;
+    public DateTime                 loginTimestamp;
 
     @Constraints.Required
     @Formats.NonEmpty
-    public String                   ip_address;
+    public String                   ipAddress;
 
-    public String                   continent_code;
-    public Integer                  continent_geoname_id;
-    public String                   continent_name;
+    // The remaining field may not necessarily have values
+    public String                   continentCode;
+    public Integer                  continentGeonameId;
+    public String                   continentName;
 
-    public Integer                  country_confidence;
-    public String                   country_iso_code;
-    public Integer                  country_geoname_id;
-    public String                   country_name;
+    public Integer                  countryConfidence;
+    public String                   countryIsoCode;
+    public Integer                  countryGeonameId;
+    public String                   countryName;
 
-    public String                   registered_country_iso_code;
-    public Integer                  registered_country_geoname_id;
-    public String                   registered_country_name;
+    public String                   registeredCountryIsoCode;
+    public Integer                  registeredCountryGeonameId;
+    public String                   registeredCountryName;
 
-    public String                   represented_country_iso_code;
-    public Integer                  represented_country_geoname_id;
-    public String                   represented_country_name;
-    public String                   represented_country_type;
+    public String                   representedCountryIsoCode;
+    public Integer                  representedCountryGeonameId;
+    public String                   representedCountryName;
+    public String                   representedCountryType;
 
-    public Integer                  city_confidence;
-    public Integer                  city_geoname_id;
-    public String                   city_name;
+    public Integer                  cityConfidence;
+    public Integer                  cityGeonameId;
+    public String                   cityName;
 
-    public String                   postal_code;
-    public Integer                  postal_confidence;
+    public String                   postalCode;
+    public Integer                  postalConfidence;
 
-    public Integer                  location_accuracy_radius;
-    public Double                   location_latitude;
-    public Double                   location_longitude;
-    public Integer                  location_metro_code;
-    public String                   location_time_zone;
+    public Integer                  locationAccuracyRadius;
+    public Double                   locationLatitude;
+    public Double                   locationLongitude;
+    public Integer                  locationMetroCode;
+    public String                   locationTimeZone;
 
-    public Integer                  most_specific_subdivision_confidence;
-    public Integer                  most_specific_subdivision_geoname_id;
-    public String                   most_specific_subdivision_iso_code;
-    public String                   most_specific_subdivision_name;
+    public Integer                  mostSpecificSubdivisionConfidence;
+    public Integer                  mostSpecificSubdivisionGeonameId;
+    public String                   mostSpecificSubdivisionIsoCode;
+    public String                   mostSpecificSubdivisionName;
 
-    public Integer                  traits_autonomous_system_number;
-    public String                   traits_autonomous_system_organization;
-    public String                   traits_domain;
-    public String                   traits_ip_address;
-    public Boolean                  traits_is_anonymous_proxy;
-    public Boolean                  traits_is_satellite_provider;
-    public String                   traits_isp;
-    public String                   traits_organization;
-    public String                   traits_user_type;
+    public Integer                  traitsAutonomousSystemNumber;
+    public String                   traitsAutonomousSystemOrganization;
+    public String                   traitsDomain;
+    public String                   traitsIpAddress;
+    public Boolean                  traitsIsAnonymousProxy;
+    public Boolean                  traitsIsSatelliteProvider;
+    public String                   traitsIsp;
+    public String                   traitsOrganization;
+    public String                   traitsUserType;
 
 
     /**
-     * Generic query helper for entity WikiUser.
+     * Generic query helper for entity UserLogin.
      */
     public static Finder<Long, UserLogin> find = new Finder<Long, UserLogin>(Long.class, UserLogin.class);
+
 
 }

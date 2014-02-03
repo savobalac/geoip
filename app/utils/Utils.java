@@ -20,7 +20,7 @@ import java.util.*;
 public class Utils {
 
     // Constants
-    public static final int MYSQL_TEXT_BYTES = 65535; // A text column is 2^16 bytes
+    public static final int TEXT_BYTES = 65535; // A text column is 2^16 bytes
 
     // Maximum upload file size of 10 Mb
     public static final int    MAX_FILE_SIZE = 10485760; // In bytes
