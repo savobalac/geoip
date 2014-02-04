@@ -43,27 +43,19 @@ public class GeoIp extends AbstractController {
     public static Result getLocation(String userName, String ipAddress) {
         try {
 
-            System.out.println("*** In getLocation() BEFORE checking the user exists");
-
             // Check the user exists and return if not
             if (WikiUser.find.where().eq("username", userName).findUnique() == null) {
                 return noWikiUser(userName);
             }
 
-            System.out.println("*** In getLocation() after checking the user exists");
-
             // Create a WebServiceClient object using the demo user ID and license key
-            int geoId = Play.application().configuration().getInt("geoip2.id");
+            int    geoId  = Play.application().configuration().getInt("geoip2.id");
             String geoKey = Play.application().configuration().getString("geoip2.key");
-            //client = new WebServiceClient.Builder(85883, "DCbc8uukhWNg").build();
-            client = new WebServiceClient.Builder(geoId, geoKey).build();
 
-            System.out.println("*** In getLocation() after building the web service client");
+            client = new WebServiceClient.Builder(geoId, geoKey).build();
 
             // Get the data
             response = client.omni(InetAddress.getByName(ipAddress));
-
-            System.out.println("*** In getLocation() after getting the response");
 
             // Create a user login object
             UserLogin userLogin = new UserLogin();

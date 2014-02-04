@@ -5,10 +5,7 @@ import com.google.common.base.Supplier;
 import models.WikiUser;
 import play.data.Form;
 import play.mvc.Result;
-import play.mvc.Security;
-
 import java.security.NoSuchAlgorithmException;
-
 import static play.data.Form.form;
 
 
@@ -33,11 +30,7 @@ public class Application extends AbstractController {
      *
      * @return Result  The home page.
      */
-    @Security.Authenticated(Secured.class) // Will require the API user to be logged in
     public static Result index() {
-
-        System.out.println("Application.index()");
-
         return AcController.index(
                 AcController.home(),    // The HTML home page from the module, as this is our documentation for now
                 descriptorSupplier());  // Serve the descriptor when accept header is 'application/json'
@@ -51,7 +44,6 @@ public class Application extends AbstractController {
      *
      * @return Result  The descriptor as JSON.
      */
-    @Security.Authenticated(Secured.class) // Will require the user to be logged in
     public static Result descriptor() {
         return AcController.descriptor();
     }
@@ -77,7 +69,7 @@ public class Application extends AbstractController {
      */
     public static Result login() {
         if (request().accepts("application/json") || request().accepts("text/json")) {
-            return ok(getInfoAsJson("Please sign in with a valid username and password."));
+            return ok(getInfoAsJson("Please submit API requests with valid username and password headers."));
         } else {
             return badRequest();
         }
@@ -138,9 +130,6 @@ public class Application extends AbstractController {
          * @throws java.security.NoSuchAlgorithmException     If the algorithm doesn't exist.
          */
         public String validate() throws NoSuchAlgorithmException {
-
-            System.out.println("Login.validate(), username: " + username + ", password: " + password);
-
             if (username == null || password == null || WikiUser.authenticate(username, password) == null) {
                 return AUTHENTICATION_ERROR_MSG;
             }

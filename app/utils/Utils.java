@@ -11,11 +11,11 @@ import java.util.*;
 /**
  * Contains utility methods and constants.
  *
- * Date: 16/10/13
- * Time: 13:23
+ * Date: 04/02/14
+ * Time: 11:02
  *
  * @author      Sav Balac
- * @version     1.2
+ * @version     1.0
  */
 public class Utils {
 

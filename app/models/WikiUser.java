@@ -62,15 +62,9 @@ public class WikiUser extends Model {
      * @param  username  Username.
      * @param  password  Password to be hashed before checking.
      * @return User      The authenticated user.
-     * @throws java.security.NoSuchAlgorithmException    If the hashing algorithm doesn't exist.
+     * @throws NoSuchAlgorithmException    If the hashing algorithm doesn't exist.
      */
     public static WikiUser authenticate(String username, String password) throws NoSuchAlgorithmException {
-        // Leave this in order to create some users and passwords
-        System.out.println("password: " + password + ", hashed password: " + Utils.hashString(password));
-
-        System.out.println("WikiUser.authenticate(), user row count = " +
-                       find.where().eq("username", username).eq("password", Utils.hashString(password)).findRowCount());
-
         return find.where().eq("username", username)
                            .eq("password", Utils.hashString(password)).findUnique();
     }

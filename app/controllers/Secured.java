@@ -9,7 +9,7 @@ import java.security.NoSuchAlgorithmException;
 
 /**
  * Ensures requests have an authenticated user.
- * Contains methods to get the username, redirect if not authorised and check if an admin user.
+ * Contains methods to get the username and redirect if not authorised.
  *
  * Date: 03/02/14
  * Time: 12:36

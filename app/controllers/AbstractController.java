@@ -17,11 +17,11 @@ import java.util.Set;
 /**
  * Top-level controller providing common fields and methods.
  *
- * Date:        21/11/13
- * Time:        12:56
+ * Date:        04/02/14
+ * Time:        11:02
  *
  * @author      Sav Balac
- * @version     1.1
+ * @version     1.0
  */
 public abstract class AbstractController extends Controller {
 
