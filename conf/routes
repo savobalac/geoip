@@ -12,7 +12,7 @@ GET     /logout                         controllers.Application.logout()
 GET     /geoip/:username/:ipaddress     controllers.GeoIp.getLocation(username:String, ipaddress: String)
 
 # Any routes not defined above will go to the Atlassian Connect module
-->      /                               ac.Routes
+#->      /                               ac.Routes
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file                   controllers.Assets.at(path="/public", file)

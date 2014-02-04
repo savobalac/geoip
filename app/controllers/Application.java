@@ -1,7 +1,7 @@
 package controllers;
 
-import com.atlassian.connect.play.java.controllers.AcController;
-import com.google.common.base.Supplier;
+//import com.atlassian.connect.play.java.controllers.AcController;
+//import com.google.common.base.Supplier;
 import models.WikiUser;
 import play.data.Form;
 import play.mvc.Result;
@@ -31,10 +31,11 @@ public class Application extends AbstractController {
      * @return Result  The home page.
      */
     public static Result index() {
-        return AcController.index(
-                AcController.home(),    // The HTML home page from the module, as this is our documentation for now
-                descriptorSupplier());  // Serve the descriptor when accept header is 'application/json'
-                                        //     try 'curl -H "Accept: application/json" http://localhost:9000'
+        return ok("index() method");
+        //return AcController.index(
+        //        AcController.home(),    // The HTML home page from the module, as this is our documentation for now
+        //        descriptorSupplier());  // Serve the descriptor when accept header is 'application/json'
+        //                                //     try 'curl -H "Accept: application/json" http://localhost:9000'
     }
 
 
@@ -44,9 +45,9 @@ public class Application extends AbstractController {
      *
      * @return Result  The descriptor as JSON.
      */
-    public static Result descriptor() {
-        return AcController.descriptor();
-    }
+    //public static Result descriptor() {
+    //    return AcController.descriptor();
+    //}
 
 
     /**
@@ -54,13 +55,13 @@ public class Application extends AbstractController {
      *
      * @return Supplier  The supplier.
      */
-    private static Supplier descriptorSupplier() {
-        return new Supplier() {
-            public Result get() {
-                return descriptor();
-            }
-        };
-    }
+    //private static Supplier descriptorSupplier() {
+    //    return new Supplier() {
+    //        public Result get() {
+    //            return descriptor();
+    //        }
+    //    };
+    //}
 
     /**
      * Requests the API user to log in.
