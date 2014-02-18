@@ -3,16 +3,22 @@
 # ~~~~
 
 # Home
-GET     /                               controllers.Application.index()
-GET     /login                          controllers.Application.login()
-POST    /login                          controllers.Application.authenticate()
-GET     /logout                         controllers.Application.logout()
+GET     /                                   controllers.Application.index()
+GET     /login                              controllers.Application.login()
+POST    /login                              controllers.Application.authenticate()
+GET     /logout                             controllers.Application.logout()
 
 # GeoIP2 service
-GET     /geoip/:username/:ipaddress     controllers.GeoIp.getLocation(username:String, ipaddress: String)
+GET     /geoip/login/:username/:ipaddress   controllers.GeoIp.getLocation(username:String, ipaddress: String)
+
+# Login report (users that have logged in from different locations)
+GET     /geoip/logindiff                    controllers.GeoIp.getLoginDiff()
+
+# Login report for the user (returns rows if the user has logged in from different locations)
+GET     /geoip/logindiff/:username          controllers.GeoIp.getUserLoginDiff(username:String)
 
 # Any routes not defined above will go to the Atlassian Connect module
-#->      /                               ac.Routes
+->      /                                   ac.Routes
 
 # Map static resources from the /public folder to the /assets URL path
-GET     /assets/*file                   controllers.Assets.at(path="/public", file)
+GET     /assets/*file                       controllers.Assets.at(path="/public", file)

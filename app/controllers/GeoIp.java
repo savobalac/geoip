@@ -43,6 +43,8 @@ public class GeoIp extends AbstractController {
     public static Result getLocation(String userName, String ipAddress) {
         try {
 
+            System.out.println("***** in method getLocation()");
+
             // Check the user exists and return if not
             if (WikiUser.find.where().eq("username", userName).findUnique() == null) {
                 return noWikiUser(userName);
@@ -140,6 +142,9 @@ public class GeoIp extends AbstractController {
      * @return Result  A message as JSON.
      */
     private static Result noWikiUser(String userName) {
+
+        System.out.println("***** in method noWikiUser()");
+
         String message = "Wiki user: " + userName + " does not exist.";
         if (request().accepts("application/json") || request().accepts("text/json")) { // Return data as JSON
             return ok(getErrorAsJson(message));
@@ -160,6 +165,35 @@ public class GeoIp extends AbstractController {
                          ", at IP address: " + ipAddress + ", error: " + e;
         if (request().accepts("application/json") || request().accepts("text/json")) { // Return data as JSON
             return ok(getErrorAsJson(message));
+        } else {
+            return badRequest();
+        }
+    }
+
+
+    /**
+     * Returns a report of users what have logged in from different locations.
+     *
+     * @return Result  Login report as JSON.
+     */
+    public static Result getLoginDiff() {
+        if (request().accepts("application/json") || request().accepts("text/json")) { // Return data as JSON
+            return ok(UserLogin.getAllDiffsAsJson());
+        } else {
+            return badRequest();
+        }
+    }
+
+
+    /**
+     * Returns a login report for the user (returns rows if they have logged in from different locations).
+     *
+     * @param  userName  Username.
+     * @return Result  Login report as JSON.
+     */
+    public static Result getUserLoginDiff(String userName) {
+        if (request().accepts("application/json") || request().accepts("text/json")) { // Return data as JSON
+            return ok(UserLogin.getUserDiffsAsJson(userName));
         } else {
             return badRequest();
         }

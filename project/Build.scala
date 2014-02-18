@@ -14,7 +14,7 @@ object ApplicationBuild extends Build {
         "org.reflections" % "reflections" % "0.9.8",
         javaCore, javaJdbc, javaEbean,
         filters,
-        //"com.atlassian.connect" % "ac-play-java_2.10" % "0.7.0-BETA6",
+        "com.atlassian.connect" % "ac-play-java_2.10" % "0.7.0-BETA6",
         "com.maxmind.geoip2" % "geoip2" % "0.7.0"
     )
 
