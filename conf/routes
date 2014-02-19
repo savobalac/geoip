@@ -9,7 +9,7 @@ POST    /login                              controllers.Application.authenticate
 GET     /logout                             controllers.Application.logout()
 
 # GeoIP2 service
-GET     /geoip/login/:username/:ipaddress   controllers.GeoIp.getLocation(username:String, ipaddress: String)
+POST    /geoip/login                        controllers.GeoIp.getLocation()
 
 # Login report (users that have logged in from different locations)
 GET     /geoip/logindiff                    controllers.GeoIp.getLoginDiff()

@@ -8,6 +8,7 @@ import models.UserLogin;
 import models.WikiUser;
 
 import play.Play;
+import play.data.Form;
 import play.mvc.Result;
 
 import play.mvc.Security;
@@ -16,6 +17,8 @@ import utils.Utils;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+
+import static play.data.Form.form;
 
 /**
  * The controller that requests location data for a user at an IP address.
@@ -37,13 +40,18 @@ public class GeoIp extends AbstractController {
     /**
      * Gets GeoIP2 location data for the requested user at the IP address and saves it to the database.
      *
-     * @param  userName  The username of the requested user.
      * @return Result  The output of GeoIP2 as a string.
      */
-    public static Result getLocation(String userName, String ipAddress) {
+    public static Result getLocation() {
+        String userName = null;
+        String ipAddress = null;
         try {
 
-            System.out.println("***** in method getLocation()");
+            Form<User> userForm = form(User.class).bindFromRequest(); // Get the username and IP address
+            userName = userForm.get().user;
+            ipAddress = userForm.get().remoteIP;
+
+            System.out.println("***** in method getLocation(), userName = " + userName + ", IP address = " + ipAddress);
 
             // Check the user exists and return if not
             if (WikiUser.find.where().eq("username", userName).findUnique() == null) {
@@ -197,6 +205,19 @@ public class GeoIp extends AbstractController {
         } else {
             return badRequest();
         }
+    }
+
+
+    /**
+     * Inner class that holds the username and IP address of the user (login).
+     */
+    public static class User {
+
+        public String user;
+        public String remoteIP;
+        public String remoteHost;
+        public String timestamp;
+
     }
 
 
