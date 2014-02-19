@@ -43,6 +43,9 @@ public class GeoIp extends AbstractController {
      * @return Result  The output of GeoIP2 as a string.
      */
     public static Result getLocation() {
+
+        System.out.println("getLocation() method");
+
         String userName = null;
         String ipAddress = null;
         try {

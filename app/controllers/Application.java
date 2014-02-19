@@ -31,6 +31,9 @@ public class Application extends AbstractController {
      * @return Result  The home page.
      */
     public static Result index() {
+
+        System.out.println("index() method");
+
         return AcController.index(
                 AcController.home(),    // The HTML home page from the module, as this is our documentation for now
                 descriptorSupplier());  // Serve the descriptor when accept header is 'application/json'
@@ -68,6 +71,9 @@ public class Application extends AbstractController {
      * @return Result  Info message as JSON.
      */
     public static Result login() {
+
+        System.out.println("login() method");
+
         if (request().accepts("application/json") || request().accepts("text/json")) {
             return ok(getInfoAsJson("Please submit API requests with valid username and password headers."));
         } else {
