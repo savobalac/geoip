@@ -145,49 +145,8 @@ public class UserLogin extends Model {
      * @return List<UserLogin>  List of all user logins.
      */
     public static List<UserLogin> getAllDiffs() {
-
-        String sql =
-            "SELECT DISTINCT " +
-            " ul1.id, ul1.username, ul1.login_timestamp, ul1.ip_address, ul1.continent_name, ul1.country_name, " +
-            " ul1.registered_country_name, ul1.represented_country_name, ul1.city_name, ul1.postal_code, " +
-            " ul1.location_time_zone, ul1.most_specific_subdivision_name, ul1.traits_ip_address " +
-            "FROM " +
-            "  user_login ul1, user_login ul2 " +
-            "WHERE ul1.username = ul2.username " +
-            "AND " +
-            " (   ul1.continent_name                    != ul2.continent_name"                  +
-            "  OR ul1.country_name                      != ul2.country_name "                   +
-            "  OR ul1.registered_country_name           != ul2.registered_country_name"         +
-            "  OR ul1.represented_country_name          != ul2.represented_country_name"        +
-            "  OR ul1.city_name                         != ul2.city_name"                       +
-            "  OR ul1.postal_code                       != ul2.postal_code"                     +
-            "  OR ul1.location_time_zone                != ul2.location_time_zone"              +
-            "  OR ul1.most_specific_subdivision_name    != ul2.most_specific_subdivision_name"  +
-            "  OR ul1.traits_ip_address                 != ul2.traits_ip_address"               +
-            " )" +
-            "ORDER BY ul1.username, ul1.login_timestamp";
-
-        RawSql rawSql =
-            RawSqlBuilder.unparsed(sql)
-                .columnMapping("ul1.id", "id")
-                .columnMapping("ul1.username", "username")
-                .columnMapping("ul1.login_timestamp", "loginTimestamp")
-                .columnMapping("ul1.ip_address", "ipAddress")
-                .columnMapping("ul1.continent_name", "continentName")
-                .columnMapping("ul1.country_name", "countryName")
-                .columnMapping("ul1.registered_country_name", "registeredCountryName")
-                .columnMapping("ul1.represented_country_name", "representedCountryName")
-                .columnMapping("ul1.city_name", "cityName")
-                .columnMapping("ul1.postal_code", "postalCode")
-                .columnMapping("ul1.location_time_zone", "locationTimeZone")
-                .columnMapping("ul1.most_specific_subdivision_name", "mostSpecificSubdivisionName")
-                .columnMapping("ul1.traits_ip_address", "traitsIpAddress")
-                .create();
-
-        Query<UserLogin> query = Ebean.find(UserLogin.class);
-        query.setRawSql(rawSql);
-        List<UserLogin> list = query.findList();
-        return list;
+        // Differences for all users will be returned
+        return getUserDiffs(null);
     }
 
     /**
@@ -204,20 +163,25 @@ public class UserLogin extends Model {
                         " ul1.location_time_zone, ul1.most_specific_subdivision_name, ul1.traits_ip_address " +
                         "FROM " +
                         "  user_login ul1, user_login ul2 " +
-                        "WHERE ul1.username = ul2.username " +
-                        "AND ul1.username = '" + userName + "' " +
-                        "AND " +
-                        " (   ul1.continent_name                    != ul2.continent_name"                  +
-                        "  OR ul1.country_name                      != ul2.country_name "                   +
-                        "  OR ul1.registered_country_name           != ul2.registered_country_name"         +
-                        "  OR ul1.represented_country_name          != ul2.represented_country_name"        +
-                        "  OR ul1.city_name                         != ul2.city_name"                       +
-                        "  OR ul1.postal_code                       != ul2.postal_code"                     +
-                        "  OR ul1.location_time_zone                != ul2.location_time_zone"              +
-                        "  OR ul1.most_specific_subdivision_name    != ul2.most_specific_subdivision_name"  +
-                        "  OR ul1.traits_ip_address                 != ul2.traits_ip_address"               +
-                        " )" +
-                        "ORDER BY ul1.username, ul1.login_timestamp";
+                        "WHERE ul1.username = ul2.username ";
+
+        // Add a check for username to the where clause if required
+        if (userName != null) {
+            sql += "AND ul1.username = '" + userName + "' ";
+        }
+
+        sql +=     "AND " +
+                    " (   ul1.continent_name                    != ul2.continent_name"                  +
+                    "  OR ul1.country_name                      != ul2.country_name "                   +
+                    "  OR ul1.registered_country_name           != ul2.registered_country_name"         +
+                    "  OR ul1.represented_country_name          != ul2.represented_country_name"        +
+                    "  OR ul1.city_name                         != ul2.city_name"                       +
+                    "  OR ul1.postal_code                       != ul2.postal_code"                     +
+                    "  OR ul1.location_time_zone                != ul2.location_time_zone"              +
+                    "  OR ul1.most_specific_subdivision_name    != ul2.most_specific_subdivision_name"  +
+                    "  OR ul1.traits_ip_address                 != ul2.traits_ip_address"               +
+                    " )" +
+                    "ORDER BY ul1.username, ul1.login_timestamp";
 
         RawSql rawSql =
                 RawSqlBuilder.unparsed(sql)

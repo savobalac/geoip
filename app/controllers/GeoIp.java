@@ -1,22 +1,24 @@
 package controllers;
 
+import com.atlassian.connect.play.java.auth.jwt.AuthenticateJwtRequest;
+
 import com.maxmind.geoip2.WebServiceClient;
 import com.maxmind.geoip2.exception.GeoIp2Exception;
 import com.maxmind.geoip2.model.OmniResponse;
 
 import models.UserLogin;
-import models.WikiUser;
+
+import java.io.IOException;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.util.List;
 
 import play.Play;
 import play.data.Form;
 import play.mvc.Result;
 
-import play.mvc.Security;
 import utils.Utils;
-
-import java.io.IOException;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
+import views.html.*;
 
 import static play.data.Form.form;
 
@@ -29,7 +31,6 @@ import static play.data.Form.form;
  * @author Sav Balac
  * @version 1.0
  */
-@Security.Authenticated(Secured.class) // All methods will require the API user to be logged in
 public class GeoIp extends AbstractController {
 
     // Class variables
@@ -42,24 +43,26 @@ public class GeoIp extends AbstractController {
      *
      * @return Result  The output of GeoIP2 as a string.
      */
-    public static Result getLocation() {
+    @AuthenticateJwtRequest // Authentication is done by the AC plugin using JWT
+    public static Result getLocation() throws Exception {
 
-        System.out.println("getLocation() method");
-
-        String userName = null;
-        String ipAddress = null;
+        String user = null;
+        String remoteIP = null;
+        String remoteHost = null;
+        String timestamp = null;
         try {
 
-            Form<User> userForm = form(User.class).bindFromRequest(); // Get the username and IP address
-            userName = userForm.get().user;
-            ipAddress = userForm.get().remoteIP;
+            Form<User> userForm = form(User.class).bindFromRequest(); // Get the posted data
+            user        = userForm.get().user;
+            remoteIP    = userForm.get().remoteIP;
+            remoteHost  = userForm.get().remoteHost;
+            timestamp   = userForm.get().timestamp;
 
-            System.out.println("***** in method getLocation(), userName = " + userName + ", IP address = " + ipAddress);
+            // Debug as testing locally gives an IP address of 0:0:0:0:0:0:0:1
+            remoteIP = "6.7.8.9";
 
-            // Check the user exists and return if not
-            if (WikiUser.find.where().eq("username", userName).findUnique() == null) {
-                return noWikiUser(userName);
-            }
+            System.out.println("***** in method getLocation(), user = " + user + ", remoteIP = " + remoteIP +
+                               ", remoteHost = " + remoteHost + ", timestamp = " + timestamp);
 
             // Create a WebServiceClient object using the demo user ID and license key
             int    geoId  = Play.application().configuration().getInt("geoip2.id");
@@ -67,15 +70,21 @@ public class GeoIp extends AbstractController {
 
             client = new WebServiceClient.Builder(geoId, geoKey).build();
 
+            System.out.println("***** Built the WebServiceClient");
+
             // Get the data
-            response = client.omni(InetAddress.getByName(ipAddress));
+            response = client.omni(InetAddress.getByName(remoteIP));
+
+            System.out.println("***** Got the response from client.omni");
 
             // Create a user login object
             UserLogin userLogin = new UserLogin();
 
-            userLogin.username = userName;
+            System.out.println("***** Created a new UserLogin");
+
+            userLogin.username = user;
             userLogin.loginTimestamp = Utils.getCurrentDateTime();
-            userLogin.ipAddress = ipAddress;
+            userLogin.ipAddress = remoteIP;
 
             userLogin.continentCode = response.getContinent().getCode();
             userLogin.continentGeonameId = response.getContinent().getGeoNameId();
@@ -123,8 +132,12 @@ public class GeoIp extends AbstractController {
             userLogin.traitsOrganization = response.getTraits().getOrganization();
             userLogin.traitsUserType = response.getTraits().getUserType();
 
+            System.out.println("***** About to save the user login");
+
             // Save the user login
             userLogin.save();
+
+            System.out.println("***** Saved the user login");
 
             // Return the response as JSON
             if (request().accepts("application/json") || request().accepts("text/json")) {
@@ -134,13 +147,13 @@ public class GeoIp extends AbstractController {
             }
 
         } catch (GeoIp2Exception e) {
-            return locationError(userName, ipAddress, e);
+            return locationError(user, remoteIP, e);
         } catch (UnknownHostException e) {
-            return locationError(userName, ipAddress, e);
+            return locationError(user, remoteIP, e);
         } catch (IOException e) {
-            return locationError(userName, ipAddress, e);
+            return locationError(user, remoteIP, e);
         } catch (Exception e) {
-            return locationError(userName, ipAddress, e);
+            return locationError(user, remoteIP, e);
         }
 
     }
@@ -153,9 +166,6 @@ public class GeoIp extends AbstractController {
      * @return Result  A message as JSON.
      */
     private static Result noWikiUser(String userName) {
-
-        System.out.println("***** in method noWikiUser()");
-
         String message = "Wiki user: " + userName + " does not exist.";
         if (request().accepts("application/json") || request().accepts("text/json")) { // Return data as JSON
             return ok(getErrorAsJson(message));
@@ -174,6 +184,7 @@ public class GeoIp extends AbstractController {
     private static Result locationError(String userName, String ipAddress, Exception e) {
         String message = "Error getting location data for Wiki user: " + userName +
                          ", at IP address: " + ipAddress + ", error: " + e;
+        System.out.println(message);
         if (request().accepts("application/json") || request().accepts("text/json")) { // Return data as JSON
             return ok(getErrorAsJson(message));
         } else {
@@ -188,7 +199,15 @@ public class GeoIp extends AbstractController {
      * @return Result  Login report as JSON.
      */
     public static Result getLoginDiff() {
-        if (request().accepts("application/json") || request().accepts("text/json")) { // Return data as JSON
+
+        // Return data in HTML or JSON as requested
+        if (request().accepts("text/html")) {
+
+            // Get the list of differences and render the list page
+            List<UserLogin> userLogins = UserLogin.getAllDiffs();
+            return ok(listUserLogins.render(userLogins, getLoggedInUser()));
+
+        } else if (request().accepts("application/json") || request().accepts("text/json")) { // Return data as JSON
             return ok(UserLogin.getAllDiffsAsJson());
         } else {
             return badRequest();
@@ -203,11 +222,26 @@ public class GeoIp extends AbstractController {
      * @return Result  Login report as JSON.
      */
     public static Result getUserLoginDiff(String userName) {
-        if (request().accepts("application/json") || request().accepts("text/json")) { // Return data as JSON
+
+        // Return data in HTML or JSON as requested
+        if (request().accepts("text/html")) {
+
+            // Get the list of differences and render the list page
+            List<UserLogin> userLogins = UserLogin.getUserDiffs(userName);
+            return ok(listUserLogins.render(userLogins, getLoggedInUser()));
+
+        } else if (request().accepts("application/json") || request().accepts("text/json")) { // Return data as JSON
             return ok(UserLogin.getUserDiffsAsJson(userName));
         } else {
             return badRequest();
         }
+    }
+
+
+    // Debug
+    public static Result ping() {
+        System.out.println("UN-authenticated ping() method");
+        return ok("ping()");
     }
 
 

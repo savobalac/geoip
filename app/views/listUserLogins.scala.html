@@ -1,0 +1,87 @@
+@**************************************************************
+* Page:             List User Logins                          *
+* Author:           Sav Balac                                 *
+* Date:             24/02/14                                  *
+* Version:          1.0                                       *
+* Description:      Lists login differences for users         *
+*                                                             *
+* @param logins     The list of user logins                   *
+* @param confluence The user of this application (Confluence) *
+**************************************************************@
+
+@(
+   logins: List[models.UserLogin],
+   confluence: models.WikiUser
+)
+
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <title>Users with Login Differences</title>
+
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="IE=9" /> <!-- Fix to allow Twitter Bootstrap to work in IE10 -->
+        <meta http-equiv="X-UA-Compatible" content="IE=edge"> <!-- Recommended by Bootstrap 3 - remove the above line? -->
+
+        <link rel="stylesheet" type="text/css" media="screen" href="@routes.Assets.at("stylesheets/bootstrap.css")">
+        <link rel="stylesheet" type="text/css" media="screen" href="@routes.Assets.at("stylesheets/bootstrap.min.css")">
+        <link rel="stylesheet" type="text/css" media="screen" href="@routes.Assets.at("stylesheets/bootstrap-theme.css")">
+        <link rel="stylesheet" type="text/css" media="screen" href="@routes.Assets.at("stylesheets/signin.css")">
+        <link rel="stylesheet" type="text/css" media="screen" href='@routes.Assets.at("stylesheets/jquery-ui-1.9.2.css")'>
+        <link rel="stylesheet" type="text/css" media="screen" href='@routes.Assets.at("stylesheets/jquery-ui-1.8.23.css")'>
+        <link rel="stylesheet" type="text/css" media="screen" href='@routes.Assets.at("stylesheets/jquery-ui-demo-docs-theme.css")'>
+        <link rel="stylesheet" type="text/css" media="screen" href="@routes.Assets.at("stylesheets/main.css")">
+    </head>
+
+    <body>
+
+        <div class="container">
+
+            <table class="table table-striped table-bordered table-condensed">
+
+                <thead>
+                    <tr>
+                        <th>Username</th>
+                        <th>Date & Time</th>
+                        <th>IP Address</th>
+                        <th>Continent</th>
+                        <th>Country</th>
+                        <th>City</th>
+                        <th>Location</th>
+                        <th>Post Code</th>
+                        <th>Time Zone</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @for(UserLogin <- logins) {
+                        <tr>
+                            <td>@UserLogin.username</td>
+                            <td>@utils.Utils.formatTimestamp(UserLogin.loginTimestamp)</td>
+                            <td>@UserLogin.ipAddress</td>
+                            <td>@UserLogin.continentName</td>
+                            <td>@UserLogin.countryName</td>
+                            <td>@UserLogin.cityName</td>
+                            <td>@UserLogin.mostSpecificSubdivisionName</td>
+                            <td>@UserLogin.postalCode</td>
+                            <td>@UserLogin.locationTimeZone</td>
+                        </tr>
+                    }
+                </tbody>
+
+            </table>
+
+        </div> <!-- container -->
+
+        <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+        <script src="//code.jquery.com/jquery.js"></script>
+
+        <!-- Include all compiled plugins (below), or include individual files as needed -->
+        <script type="text/javascript" src='@routes.Assets.at("javascripts/bootstrap.js")'></script>
+        <script type="text/javascript" src='@routes.Assets.at("javascripts/bootstrap.min.js")'></script>
+
+    </body>
+
+</html>

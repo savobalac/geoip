@@ -17,6 +17,8 @@ GET     /geoip/logindiff                    controllers.GeoIp.getLoginDiff()
 # Login report for the user (returns rows if the user has logged in from different locations)
 GET     /geoip/logindiff/:username          controllers.GeoIp.getUserLoginDiff(username:String)
 
+POST    /geoip/ping                         controllers.GeoIp.ping()
+
 # Any routes not defined above will go to the Atlassian Connect module
 ->      /                                   ac.Routes
 

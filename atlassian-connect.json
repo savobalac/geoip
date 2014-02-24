@@ -1,26 +1,24 @@
 {
- "baseUrl": "${localBaseUrl}",
- "key": "confluence-webhook",
- "authentication": {
- "type": "jwt"
- },
- "vendor": {
- "name": "Wikistrat",
- "url": "http://www.wikistrat.com"
- },
- "description": "Atlassian Connect add-on that connects to GeoIP2",
- "name": "GeoIP2",
- "lifecycle": {
- "installed": "/installed",
- "uninstalled": "/uninstalled"
- },
- "scopes": [ "READ", "WRITE" ],
- "modules": {
- "webhooks": [
- { "key": "confluence-webhook",
- "event": "login",
- "url": "geoip/login"
- }
- ]
- }
+    "baseUrl": "${localBaseUrl}",
+    "key": "${addonKey}",
+    "authentication": {
+        "type": "jwt"
+    },
+    "vendor": {
+        "name": "Wikistrat",
+        "url": "http://www.wikistrat.com"
+    },
+    "description": "Atlassian Connect add-on that connects to GeoIP2",
+    "name": "GeoIP2",
+    "lifecycle": {
+        "installed": "/installed"
+    },
+    "scopes": [ "READ" ],
+    "modules": {
+        "webhooks": [
+            { "event": "login",        "url": "/geoip/login" },
+            { "event": "login_failed", "url": "/geoip/ping"  },
+            { "event": "logout",       "url": "/geoip/ping"  }
+        ]
+    }
 }
