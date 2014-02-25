@@ -17,6 +17,9 @@ GET     /login-report                       controllers.GeoIp.loginReport()
 # Login report for the user (returns rows if the user has logged in from different locations)
 GET     /login-report/:username             controllers.GeoIp.userLoginReport(username:String)
 
+# Debug
+POST    /geoip/logout                       controllers.GeoIp.logout()
+
 # Any routes not defined above will go to the Atlassian Connect module
 ->      /                                   ac.Routes
 

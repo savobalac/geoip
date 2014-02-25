@@ -203,21 +203,21 @@ public class GeoIp extends AbstractController {
      *
      * @return Result  Login report as JSON.
      */
-    @AuthenticateJwtRequest // Authentication is done by the AC plugin using JWT
+    @AuthenticateJwtRequest
     public static Result loginReport() {
 
         // Return data in HTML or JSON as requested
-        if (request().accepts("text/html")) {
+        //if (request().accepts("text/html")) {
 
             // Get the list of differences and render the list page
             List<UserLogin> userLogins = UserLogin.getAllDiffs();
             return ok(listUserLogins.render(userLogins));
 
-        } else if (request().accepts("application/json") || request().accepts("text/json")) { // Return data as JSON
-            return ok(UserLogin.getAllDiffsAsJson());
-        } else {
-            return badRequest();
-        }
+        //} else if (request().accepts("application/json") || request().accepts("text/json")) { // Return data as JSON
+        //    return ok(UserLogin.getAllDiffsAsJson());
+        //} else {
+        //    return badRequest();
+        //}
     }
 
 
@@ -227,7 +227,7 @@ public class GeoIp extends AbstractController {
      * @param  userName  Username.
      * @return Result  Login report as JSON.
      */
-    //@AuthenticateJwtRequest // Authentication is done by the AC plugin using JWT
+    //@AuthenticateJwtRequest
     public static Result userLoginReport(String userName) {
 
         // Return data in HTML or JSON as requested
@@ -242,6 +242,18 @@ public class GeoIp extends AbstractController {
         } else {
             return badRequest();
         }
+    }
+
+
+    /**
+     * User logged out from Confluence.
+     *
+     * @return  Result  A logout message.
+     */
+    @AuthenticateJwtRequest
+    public static Result logout() {
+        System.out.println("User logged out from Confluence");
+        return ok("User logged out from Confluence");
     }
 
 
