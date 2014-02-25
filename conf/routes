@@ -12,12 +12,10 @@ GET     /logout                             controllers.Application.logout()
 POST    /geoip/login                        controllers.GeoIp.getLocation()
 
 # Login report (users that have logged in from different locations)
-GET     /geoip/logindiff                    controllers.GeoIp.getLoginDiff()
+GET     /login-report                       controllers.GeoIp.loginReport()
 
 # Login report for the user (returns rows if the user has logged in from different locations)
-GET     /geoip/logindiff/:username          controllers.GeoIp.getUserLoginDiff(username:String)
-
-POST    /geoip/ping                         controllers.GeoIp.ping()
+GET     /login-report/:username             controllers.GeoIp.userLoginReport(username:String)
 
 # Any routes not defined above will go to the Atlassian Connect module
 ->      /                                   ac.Routes

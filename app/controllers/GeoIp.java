@@ -1,7 +1,9 @@
 package controllers;
 
+import com.atlassian.connect.play.java.AC;
 import com.atlassian.connect.play.java.auth.jwt.AuthenticateJwtRequest;
 
+import com.atlassian.connect.play.java.token.CheckValidToken;
 import com.maxmind.geoip2.WebServiceClient;
 import com.maxmind.geoip2.exception.GeoIp2Exception;
 import com.maxmind.geoip2.model.OmniResponse;
@@ -15,6 +17,7 @@ import java.util.List;
 
 import play.Play;
 import play.data.Form;
+import play.libs.Json;
 import play.mvc.Result;
 
 import utils.Utils;
@@ -71,9 +74,10 @@ public class GeoIp extends AbstractController {
             client = new WebServiceClient.Builder(geoId, geoKey).build();
 
             System.out.println("***** Built the WebServiceClient");
+            System.out.println("***** Not calling GeoIP as we've reached our free query limit");
 
             // Get the data
-            response = client.omni(InetAddress.getByName(remoteIP));
+            /*response = client.omni(InetAddress.getByName(remoteIP));
 
             System.out.println("***** Got the response from client.omni");
 
@@ -144,14 +148,15 @@ public class GeoIp extends AbstractController {
                 return ok(getSuccessAsJson(response.toString()));
             } else {
                 return badRequest();
-            }
+            }*/
+            return ok("ok");
 
-        } catch (GeoIp2Exception e) {
+        /*} catch (GeoIp2Exception e) {
             return locationError(user, remoteIP, e);
         } catch (UnknownHostException e) {
             return locationError(user, remoteIP, e);
         } catch (IOException e) {
-            return locationError(user, remoteIP, e);
+            return locationError(user, remoteIP, e);*/
         } catch (Exception e) {
             return locationError(user, remoteIP, e);
         }
@@ -198,14 +203,15 @@ public class GeoIp extends AbstractController {
      *
      * @return Result  Login report as JSON.
      */
-    public static Result getLoginDiff() {
+    @AuthenticateJwtRequest // Authentication is done by the AC plugin using JWT
+    public static Result loginReport() {
 
         // Return data in HTML or JSON as requested
         if (request().accepts("text/html")) {
 
             // Get the list of differences and render the list page
             List<UserLogin> userLogins = UserLogin.getAllDiffs();
-            return ok(listUserLogins.render(userLogins, getLoggedInUser()));
+            return ok(listUserLogins.render(userLogins));
 
         } else if (request().accepts("application/json") || request().accepts("text/json")) { // Return data as JSON
             return ok(UserLogin.getAllDiffsAsJson());
@@ -221,27 +227,21 @@ public class GeoIp extends AbstractController {
      * @param  userName  Username.
      * @return Result  Login report as JSON.
      */
-    public static Result getUserLoginDiff(String userName) {
+    //@AuthenticateJwtRequest // Authentication is done by the AC plugin using JWT
+    public static Result userLoginReport(String userName) {
 
         // Return data in HTML or JSON as requested
         if (request().accepts("text/html")) {
 
             // Get the list of differences and render the list page
             List<UserLogin> userLogins = UserLogin.getUserDiffs(userName);
-            return ok(listUserLogins.render(userLogins, getLoggedInUser()));
+            return ok(listUserLogins.render(userLogins));
 
         } else if (request().accepts("application/json") || request().accepts("text/json")) { // Return data as JSON
             return ok(UserLogin.getUserDiffsAsJson(userName));
         } else {
             return badRequest();
         }
-    }
-
-
-    // Debug
-    public static Result ping() {
-        System.out.println("UN-authenticated ping() method");
-        return ok("ping()");
     }
 
 

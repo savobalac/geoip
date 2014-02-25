@@ -16,9 +16,19 @@
     "scopes": [ "READ" ],
     "modules": {
         "webhooks": [
-            { "event": "login",        "url": "/geoip/login" },
-            { "event": "login_failed", "url": "/geoip/ping"  },
-            { "event": "logout",       "url": "/geoip/ping"  }
+            {
+                "event": "login",
+                "url": "/geoip/login"
+            }
+        ],
+        "generalPages": [
+            {
+                "key": "login-report",
+                "url": "/login-report",
+                "name": {
+                    "value": "Login Report"
+                }
+            }
         ]
     }
 }
