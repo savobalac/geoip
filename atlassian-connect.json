@@ -16,12 +16,8 @@
     "scopes": [ "READ" ],
     "modules": {
         "webhooks": [
-            {
-                "event": "login",
-                "url": "/geoip/login",
-                "event": "logout",
-                "url": "/geoip/logout"
-            }
+            {   "event": "login",  "url": "/geoip/login"   },
+            {   "event": "logout", "url": "/geoip/logout"  }
         ],
         "generalPages": [
             {

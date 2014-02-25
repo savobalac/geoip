@@ -74,10 +74,9 @@ public class GeoIp extends AbstractController {
             client = new WebServiceClient.Builder(geoId, geoKey).build();
 
             System.out.println("***** Built the WebServiceClient");
-            System.out.println("***** Not calling GeoIP as we've reached our free query limit");
 
             // Get the data
-            /*response = client.omni(InetAddress.getByName(remoteIP));
+            response = client.omni(InetAddress.getByName(remoteIP));
 
             System.out.println("***** Got the response from client.omni");
 
@@ -148,15 +147,14 @@ public class GeoIp extends AbstractController {
                 return ok(getSuccessAsJson(response.toString()));
             } else {
                 return badRequest();
-            }*/
-            return ok("ok");
+            }
 
-        /*} catch (GeoIp2Exception e) {
+        } catch (GeoIp2Exception e) {
             return locationError(user, remoteIP, e);
         } catch (UnknownHostException e) {
             return locationError(user, remoteIP, e);
         } catch (IOException e) {
-            return locationError(user, remoteIP, e);*/
+            return locationError(user, remoteIP, e);
         } catch (Exception e) {
             return locationError(user, remoteIP, e);
         }
