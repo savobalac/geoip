@@ -13,7 +13,7 @@
     "lifecycle": {
         "installed": "/installed"
     },
-    "scopes": [ "READ" ],
+    "scopes": [ "READ", "WRITE" ],
     "modules": {
         "webhooks": [
             {   "event": "login",  "url": "/geoip/login"   },
@@ -21,10 +21,17 @@
         ],
         "generalPages": [
             {
-                "key": "login-report",
-                "url": "/login-report",
+                "key": "loginreport",
+                "url": "/loginreport",
                 "name": {
                     "value": "Login Report"
+                }
+            },
+            {
+                "key": "test",
+                "url": "/assets/testgeneralpage.html",
+                "name": {
+                    "value": "Test General Page HTML"
                 }
             }
         ]

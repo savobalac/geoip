@@ -12,16 +12,16 @@ GET     /logout                             controllers.Application.logout()
 POST    /geoip/login                        controllers.GeoIp.getLocation()
 
 # Login report (users that have logged in from different locations)
-GET     /login-report                       controllers.GeoIp.loginReport()
+GET     /loginreport                        controllers.GeoIp.loginReport()
 
 # Login report for the user (returns rows if the user has logged in from different locations)
-GET     /login-report/:username             controllers.GeoIp.userLoginReport(username:String)
+GET     /loginreport/:username              controllers.GeoIp.userLoginReport(username:String)
 
 # Debug
 POST    /geoip/logout                       controllers.GeoIp.logout()
 
-# Any routes not defined above will go to the Atlassian Connect module
-->      /                                   ac.Routes
-
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file                       controllers.Assets.at(path="/public", file)
+
+# Any routes not defined above will go to the Atlassian Connect module
+->      /                                   ac.Routes

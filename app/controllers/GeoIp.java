@@ -76,7 +76,7 @@ public class GeoIp extends AbstractController {
             System.out.println("***** Built the WebServiceClient");
 
             // Get the data
-            response = client.omni(InetAddress.getByName(remoteIP));
+            /*response = client.omni(InetAddress.getByName(remoteIP));
 
             System.out.println("***** Got the response from client.omni");
 
@@ -140,21 +140,22 @@ public class GeoIp extends AbstractController {
             // Save the user login
             userLogin.save();
 
-            System.out.println("***** Saved the user login");
+            System.out.println("***** Saved the user login");*/
 
             // Return the response as JSON
             if (request().accepts("application/json") || request().accepts("text/json")) {
-                return ok(getSuccessAsJson(response.toString()));
+                //return ok(getSuccessAsJson(response.toString()));
+                return ok(getSuccessAsJson("getLocation() called but not saved"));
             } else {
                 return badRequest();
             }
 
-        } catch (GeoIp2Exception e) {
+        /*} catch (GeoIp2Exception e) {
             return locationError(user, remoteIP, e);
         } catch (UnknownHostException e) {
             return locationError(user, remoteIP, e);
         } catch (IOException e) {
-            return locationError(user, remoteIP, e);
+            return locationError(user, remoteIP, e);*/
         } catch (Exception e) {
             return locationError(user, remoteIP, e);
         }
@@ -209,8 +210,8 @@ public class GeoIp extends AbstractController {
 
             // Get the list of differences and render the list page
             List<UserLogin> userLogins = UserLogin.getAllDiffs();
-            return ok(listUserLogins.render(userLogins));
-
+            //return ok(listUserLogins.render(userLogins));
+            return ok("Dummy login report");
         //} else if (request().accepts("application/json") || request().accepts("text/json")) { // Return data as JSON
         //    return ok(UserLogin.getAllDiffsAsJson());
         //} else {
