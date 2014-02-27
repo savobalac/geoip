@@ -181,7 +181,7 @@ public class UserLogin extends Model {
                     "  OR ul1.most_specific_subdivision_name    != ul2.most_specific_subdivision_name"  +
                     "  OR ul1.traits_ip_address                 != ul2.traits_ip_address"               +
                     " )" +
-                    "ORDER BY ul1.username, ul1.login_timestamp";
+                    "ORDER BY ul1.username, ul1.login_timestamp DESC";
 
         RawSql rawSql =
                 RawSqlBuilder.unparsed(sql)

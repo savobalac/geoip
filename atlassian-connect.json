@@ -26,13 +26,6 @@
                 "name": {
                     "value": "Login Report"
                 }
-            },
-            {
-                "key": "test",
-                "url": "/assets/testgeneralpage.html",
-                "name": {
-                    "value": "Test General Page HTML"
-                }
             }
         ]
     }

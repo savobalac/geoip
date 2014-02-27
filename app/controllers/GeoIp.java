@@ -62,10 +62,7 @@ public class GeoIp extends AbstractController {
             timestamp   = userForm.get().timestamp;
 
             // Debug as testing locally gives an IP address of 0:0:0:0:0:0:0:1
-            remoteIP = "6.7.8.9";
-
-            System.out.println("***** in method getLocation(), user = " + user + ", remoteIP = " + remoteIP +
-                               ", remoteHost = " + remoteHost + ", timestamp = " + timestamp);
+            //remoteIP = "6.7.8.9";
 
             // Create a WebServiceClient object using the demo user ID and license key
             int    geoId  = Play.application().configuration().getInt("geoip2.id");
@@ -73,17 +70,11 @@ public class GeoIp extends AbstractController {
 
             client = new WebServiceClient.Builder(geoId, geoKey).build();
 
-            System.out.println("***** Built the WebServiceClient");
-
             // Get the data
-            /*response = client.omni(InetAddress.getByName(remoteIP));
-
-            System.out.println("***** Got the response from client.omni");
+            response = client.omni(InetAddress.getByName(remoteIP));
 
             // Create a user login object
             UserLogin userLogin = new UserLogin();
-
-            System.out.println("***** Created a new UserLogin");
 
             userLogin.username = user;
             userLogin.loginTimestamp = Utils.getCurrentDateTime();
@@ -135,27 +126,22 @@ public class GeoIp extends AbstractController {
             userLogin.traitsOrganization = response.getTraits().getOrganization();
             userLogin.traitsUserType = response.getTraits().getUserType();
 
-            System.out.println("***** About to save the user login");
-
             // Save the user login
             userLogin.save();
 
-            System.out.println("***** Saved the user login");*/
-
             // Return the response as JSON
             if (request().accepts("application/json") || request().accepts("text/json")) {
-                //return ok(getSuccessAsJson(response.toString()));
-                return ok(getSuccessAsJson("getLocation() called but not saved"));
+                return ok(getSuccessAsJson(response.toString()));
             } else {
                 return badRequest();
             }
 
-        /*} catch (GeoIp2Exception e) {
+        } catch (GeoIp2Exception e) {
             return locationError(user, remoteIP, e);
         } catch (UnknownHostException e) {
             return locationError(user, remoteIP, e);
         } catch (IOException e) {
-            return locationError(user, remoteIP, e);*/
+            return locationError(user, remoteIP, e);
         } catch (Exception e) {
             return locationError(user, remoteIP, e);
         }
@@ -206,17 +192,16 @@ public class GeoIp extends AbstractController {
     public static Result loginReport() {
 
         // Return data in HTML or JSON as requested
-        //if (request().accepts("text/html")) {
+        if (request().accepts("text/html")) {
 
             // Get the list of differences and render the list page
             List<UserLogin> userLogins = UserLogin.getAllDiffs();
-            //return ok(listUserLogins.render(userLogins));
-            return ok("Dummy login report");
-        //} else if (request().accepts("application/json") || request().accepts("text/json")) { // Return data as JSON
-        //    return ok(UserLogin.getAllDiffsAsJson());
-        //} else {
-        //    return badRequest();
-        //}
+            return ok(listUserLogins.render(userLogins));
+        } else if (request().accepts("application/json") || request().accepts("text/json")) { // Return data as JSON
+            return ok(UserLogin.getAllDiffsAsJson());
+        } else {
+            return badRequest();
+        }
     }
 
 
