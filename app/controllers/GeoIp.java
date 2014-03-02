@@ -211,7 +211,7 @@ public class GeoIp extends AbstractController {
      * @param  userName  Username.
      * @return Result  Login report as JSON.
      */
-    //@AuthenticateJwtRequest
+    @AuthenticateJwtRequest
     public static Result userLoginReport(String userName) {
 
         // Return data in HTML or JSON as requested
