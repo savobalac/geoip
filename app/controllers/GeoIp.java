@@ -64,7 +64,7 @@ public class GeoIp extends AbstractController {
             Form<User> userForm = form(User.class).bindFromRequest(); // Get the posted data
             user        = userForm.get().user;
             //remoteIP    = userForm.get().remoteIP;
-            remoteIP = request().remoteAddress();
+            remoteIP = request().remoteAddress(); // Try this
             remoteHost  = userForm.get().remoteHost;
             timestamp   = userForm.get().timestamp;
 
