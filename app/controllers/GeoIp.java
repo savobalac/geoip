@@ -55,6 +55,12 @@ public class GeoIp extends AbstractController {
         String timestamp = null;
         try {
 
+            System.out.println("***** request().host() = " + request().host());
+            System.out.println("***** request().remoteAddress() = " + request().remoteAddress());
+            System.out.println("***** request() = " + request());
+            System.out.println("***** request().body() = " + request().body());
+            System.out.println("***** request().headers() = " + request().headers());
+
             Form<User> userForm = form(User.class).bindFromRequest(); // Get the posted data
             user        = userForm.get().user;
             remoteIP    = userForm.get().remoteIP;
