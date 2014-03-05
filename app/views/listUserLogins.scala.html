@@ -39,39 +39,49 @@
 
         <div>
 
-            <table border="1">
+            @if(logins.isEmpty()) {
 
-                <thead>
-                    <tr>
-                        <th>Username</th>
-                        <th>Date & Time</th>
-                        <th>IP Address</th>
-                        <th>Continent</th>
-                        <th>Country</th>
-                        <th>City</th>
-                        <th>Location</th>
-                        <th>Post Code</th>
-                        <th>Time Zone</th>
-                    </tr>
-                </thead>
+            <div>
+                <em>No users with differences in login data</em>
+            </div>
 
-                <tbody>
-                    @for(UserLogin <- logins) {
+            } else {
+
+                <table class="aui">
+
+                    <thead>
                         <tr>
-                            <td>@UserLogin.username</td>
-                            <td>@utils.Utils.formatTimestamp(UserLogin.loginTimestamp)</td>
-                            <td>@UserLogin.ipAddress</td>
-                            <td>@UserLogin.continentName</td>
-                            <td>@UserLogin.countryName</td>
-                            <td>@UserLogin.cityName</td>
-                            <td>@UserLogin.mostSpecificSubdivisionName</td>
-                            <td>@UserLogin.postalCode</td>
-                            <td>@UserLogin.locationTimeZone</td>
+                            <th id="username">Username</th>
+                            <th id="loginTimestamp">Date & Time</th>
+                            <th id="ipAddress">IP Address</th>
+                            <th id="continentName">Continent</th>
+                            <th id="countryName">Country</th>
+                            <th id="cityName">City</th>
+                            <th id="mostSpecificSubdivisionName">Location</th>
+                            <th id="postalCode">Post Code</th>
+                            <th id="locationTimeZone">Time Zone</th>
                         </tr>
-                    }
-                </tbody>
+                    </thead>
 
-            </table>
+                    <tbody>
+                        @for(UserLogin <- logins) {
+                            <tr>
+                                <td headers="username">@UserLogin.username</td>
+                                <td headers="loginTimestamp">@utils.Utils.formatTimestamp(UserLogin.loginTimestamp)</td>
+                                <td headers="ipAddress">@UserLogin.ipAddress</td>
+                                <td headers="continentName">@UserLogin.continentName</td>
+                                <td headers="countryName">@UserLogin.countryName</td>
+                                <td headers="cityName">@UserLogin.cityName</td>
+                                <td headers="mostSpecificSubdivisionName">@UserLogin.mostSpecificSubdivisionName</td>
+                                <td headers="postalCode">@UserLogin.postalCode</td>
+                                <td headers="locationTimeZone">@UserLogin.locationTimeZone</td>
+                            </tr>
+                        }
+                    </tbody>
+
+                </table>
+
+            }
 
         </div> <!-- container -->
 

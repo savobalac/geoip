@@ -54,22 +54,14 @@ public class GeoIp extends AbstractController {
         String remoteHost = null;
         String timestamp = null;
         try {
-
-            System.out.println("***** request().host() = " + request().host());
-            System.out.println("***** request().remoteAddress() = " + request().remoteAddress());
-            System.out.println("***** request() = " + request());
-            System.out.println("***** request().body() = " + request().body());
-            System.out.println("***** request().headers() = " + request().headers());
-
             Form<User> userForm = form(User.class).bindFromRequest(); // Get the posted data
             user        = userForm.get().user;
             remoteIP    = userForm.get().remoteIP;
-            //remoteIP = request().remoteAddress(); // These are reserved IP addresses and GeoIP2 returns an error
             remoteHost  = userForm.get().remoteHost;
             timestamp   = userForm.get().timestamp;
 
             // Debug as testing locally gives an IP address of 0:0:0:0:0:0:0:1
-            //remoteIP = "6.7.8.9";
+            //remoteIP = "192.168.1.72";
 
             // Create a WebServiceClient object using the demo user ID and license key
             int    geoId  = Play.application().configuration().getInt("geoip2.id");
@@ -157,22 +149,6 @@ public class GeoIp extends AbstractController {
 
 
     /**
-     * Returns a message when the Wiki user doesn't exist.
-     *
-     * @param  userName  Username.
-     * @return Result  A message as JSON.
-     */
-    private static Result noWikiUser(String userName) {
-        String message = "Wiki user: " + userName + " does not exist.";
-        if (request().accepts("application/json") || request().accepts("text/json")) { // Return data as JSON
-            return ok(getErrorAsJson(message));
-        } else {
-            return badRequest();
-        }
-    }
-
-
-    /**
      * Returns a message if an exception occurred getting the GeoIP data.
      *
      * @param  userName  Username.
@@ -204,6 +180,7 @@ public class GeoIp extends AbstractController {
             // Get the list of differences and render the list page
             List<UserLogin> userLogins = UserLogin.getAllDiffs();
             return ok(listUserLogins.render(userLogins));
+
         } else if (request().accepts("application/json") || request().accepts("text/json")) { // Return data as JSON
             return ok(UserLogin.getAllDiffsAsJson());
         } else {
@@ -243,7 +220,6 @@ public class GeoIp extends AbstractController {
      */
     @AuthenticateJwtRequest
     public static Result logout() {
-        System.out.println("User logged out from Confluence");
         return ok("User logged out from Confluence");
     }
 
